@@ -10,7 +10,7 @@
     "db:migrate": "npx prisma migrate dev",
     "image:worker": "node dist/workers/image.upload.worker.js"
   },
-  "author": "Manpreet Singh",
+  "author": "Jashanjit Kaur",
   "license": "ISC",
   "dependencies": {
     "@prisma/adapter-pg": "^7.2.0",

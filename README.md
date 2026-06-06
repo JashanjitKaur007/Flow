@@ -1294,5 +1294,5 @@ REDIS_URL=
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/jashanjitkaur-Singh-Kamboj">Jashanjit Kaur</a>
+  Built with ❤️ by <a href="https://github.com/JashanjitKaur007">Jashanjit Kaur</a>
 </p>
