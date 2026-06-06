@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - flow-network
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  flow-backend:
+    image: manpreet3033/flow-backend
+    container_name: flow-backend
+    command: npm run dev
+    ports:
+      - "8080:8080"
+    networks:
+      - flow-network
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  image-worker:
+    image: manpreet3033/flow-backend
+    container_name: image-worker
+    command: npm run image:worker
+    networks:
+      - flow-network
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+
+networks:
+  flow-network:
+    driver: bridge

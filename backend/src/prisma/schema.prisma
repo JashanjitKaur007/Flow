@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_DIRECT_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique 
+  password      String
+  firstName     String 
+  lastName      String 
+  role          Role     @default(PATIENT)
+  clinicId      String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  profilePicture String?
+  clinic        DoctorClinic?  @relation("StaffInClinic",fields: [clinicId], references: [id], onDelete: Cascade)  
+  tokens        Token[]  @relation("PatientTokens")
+  staffActivity StaffActivity[]
+  sessions      Session[]
+
+  @@index([clinicId])
+  @@index([role])
+  @@index([clinicId, role])
+  @@index([isActive])
+}
+
+model DoctorClinic {
+  id            String   @id @default(uuid())
+  name          String
+  address       String?
+  latitude      Float
+  longitude     Float
+  phone         String?
+  email         String?
+  website       String?
+  description   String?
+  logo          String?
+  images        String[]    @default([])
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  type          DoctorType  @default(GENERAL_PRACTICE)
+  openingHours  Json        @default("{\"start\":\"09:00\",\"end\":\"17:00\"}")
+
+  staff         User[]      @relation("StaffInClinic")
+  queues        Queue[] 
+  @@unique([name, latitude, longitude])
+  @@index([isActive])
+  @@index([latitude, longitude])
+}
+
+model Queue {
+  id              String   @id @default(uuid())
+  clinicId        String
+  queueDate       DateTime
+  currentTokenNo  Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  maxQueueSize    Int      @default(50)
+  startTime       DateTime
+  endTime         DateTime
+
+  clinic          DoctorClinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  tokens          Token[]
+
+  @@index([clinicId])
+  @@index([queueDate])
+  @@index([isActive])
+  @@index([clinicId, queueDate])
+
+  @@unique([clinicId, queueDate])
+}
+
+model Token {
+  id              String   @id @default(uuid())
+  queueId         String
+  patientId       String
+  tokenNumber     Int      
+  status          TokenStatus @default(WAITING)
+  createdAt       DateTime @default(now())
+  calledAt        DateTime?
+  completedAt     DateTime?
+  skippedAt       DateTime?
+
+  patient         User     @relation("PatientTokens", fields: [patientId], references: [id], onDelete: Cascade)
+  queue           Queue     @relation(fields: [queueId], references: [id], onDelete: Cascade)
+  staffActivity   StaffActivity[]
+
+  @@index([queueId])
+  @@index([patientId])
+  @@index([queueId, status])
+  @@index([status])
+  @@unique([queueId, tokenNumber])
+}
+
+model StaffActivity {
+  id              String   @id @default(uuid())
+  staffId         String
+  tokenId         String
+  action          StaffAction
+  createdAt       DateTime @default(now())
+
+  staff           User     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  token           Token    @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+
+  @@index([staffId])
+  @@index([tokenId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([tokenId, action])
+  @@unique([staffId, tokenId, action])
+}
+
+model Session {
+  id              String   @id @default(uuid())
+  userId          String
+  refreshTokenHash    String   @unique
+  userAgent       String?
+  ipAddress       String?
+  expiresAt       DateTime
+  isRevoked       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isRevoked])
+  @@index([expiresAt])
+  @@index([refreshTokenHash, isRevoked, expiresAt])
+}
+
+enum Role {
+  PATIENT
+  STAFF
+  ADMIN
+}
+
+enum TokenStatus {
+  WAITING
+  CALLED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum StaffAction {
+  CALL
+  SKIP
+  COMPLETE
+}
+
+enum DoctorType {
+  GENERAL_PRACTICE
+  PEDIATRICS
+  DERMATOLOGY
+  PSYCHIATRY
+  GYNECOLOGY
+  ORTHOPEDICS
+  ENT
+  DENTIST
+}
