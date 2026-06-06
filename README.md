@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
 </p>
 
-# 🏥 flow Backend
+# 🏥 Flow Backend
 
 > A robust, real-time clinic queue management system built with modern technologies. Designed to eliminate long waiting times at clinics by digitizing the queue experience.
 
@@ -28,7 +28,7 @@
 
 ## 🎯 Overview
 
-flow is a comprehensive queue management solution for healthcare facilities. It enables patients to join virtual queues, receive real-time updates on their position, and get notified when it's their turn — all without physically waiting at the clinic.
+Flow is a comprehensive queue management solution for healthcare facilities. It enables patients to join virtual queues, receive real-time updates on their position, and get notified when it's their turn — all without physically waiting at the clinic.
 
 ### Problem Statement
 
