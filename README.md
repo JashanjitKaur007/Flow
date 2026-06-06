@@ -233,7 +233,7 @@ services:
     restart: unless-stopped
 
   flow-backend:
-    image: manpreet3033/flow-backend
+    image: jashanjitkaur3033/flow-backend
     container_name: flow-backend
     command: npm run dev
     ports:
@@ -247,7 +247,7 @@ services:
       - redis
 
   image-worker:
-    image: manpreet3033/flow-backend
+    image: jashanjitkaur3033/flow-backend
     container_name: image-worker
     command: npm run image:worker
     networks:
@@ -1294,5 +1294,5 @@ REDIS_URL=
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/Manpreet-Singh-Kamboj">Manpreet Singh</a>
+  Built with ❤️ by <a href="https://github.com/jashanjitkaur-Singh-Kamboj">Jashanjit Kaur</a>
 </p>
